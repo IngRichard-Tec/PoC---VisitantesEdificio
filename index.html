@@ -1,0 +1,174 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Sistema de Control de Visitas - Condominio</title>
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+  <!-- Navegación -->
+  <header>
+    <h1>Condominio "Los Olivos"</h1>
+    <nav>
+      <button class="nav-btn active" onclick="showSection('residentes')">Gestión de Residentes</button>
+      <button class="nav-btn" onclick="showSection('visitas')">Registrar Visita</button>
+      <button class="nav-btn" onclick="showSection('historial')">Historial de Visitas</button>
+    </nav>
+  </header>
+
+  <main class="container">
+
+    <!-- SECCIÓN 1: RESIDENTES -->
+    <section id="sec-residentes" class="section active">
+      <h2>Gestión de Residentes</h2>
+      
+      <div class="card">
+        <h3 id="form-resident-title">Agregar Nuevo Residente</h3>
+        <form id="form-residente" onsubmit="guardarResidente(event)">
+          <input type="hidden" id="residente-id">
+          
+          <div class="form-group">
+            <label for="res-nombre">Nombre Completo:</label>
+            <input type="text" id="res-nombre" required placeholder="Ej: Juan Pérez">
+          </div>
+
+          <div class="form-group">
+            <label for="res-telefono">Teléfono:</label>
+            <input type="tel" id="res-telefono" required placeholder="Ej: 555-1234">
+          </div>
+
+          <div class="form-row">
+            <div class="form-group">
+              <label for="res-piso">Piso:</label>
+              <select id="res-piso" required>
+                <option value="">Seleccione Piso</option>
+                <option value="1">Piso 1</option>
+                <option value="2">Piso 2</option>
+                <option value="3">Piso 3</option>
+                <option value="4">Piso 4</option>
+                <option value="5">Piso 5</option>
+              </select>
+            </div>
+
+            <div class="form-group">
+              <label for="res-depto">Departamento:</label>
+              <select id="res-depto" required>
+                <option value="">Seleccione Dpto</option>
+                <option value="A">Depto A</option>
+                <option value="B">Depto B</option>
+                <option value="C">Depto C</option>
+                <option value="D">Depto D</option>
+              </select>
+            </div>
+          </div>
+
+          <button type="submit" class="btn btn-success" id="btn-save-resident">Guardar Residente</button>
+          <button type="button" class="btn btn-secondary" id="btn-cancel-edit" style="display:none;" onclick="resetFormResidente()">Cancelar</button>
+        </form>
+      </div>
+
+      <h3>Lista de Residentes</h3>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Nombre</th>
+            <th>Teléfono</th>
+            <th>Ubicación</th>
+            <th>Acciones</th>
+          </tr>
+        </thead>
+        <tbody id="tabla-residentes">
+          <!-- Dinámico -->
+        </tbody>
+      </table>
+    </section>
+
+
+    <!-- SECCIÓN 2: REGISTRO DE VISITAS -->
+    <section id="sec-visitas" class="section">
+      <h2>Registrar Nueva Visita</h2>
+
+      <div class="card">
+        <div class="form-row">
+          <div class="form-group">
+            <label for="vis-piso">Seleccionar Piso:</label>
+            <select id="vis-piso" onchange="cargarResidentesDepto()">
+              <option value="">-- Seleccionar --</option>
+              <option value="1">Piso 1</option>
+              <option value="2">Piso 2</option>
+              <option value="3">Piso 3</option>
+              <option value="4">Piso 4</option>
+              <option value="5">Piso 5</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="vis-depto">Seleccionar Departamento:</label>
+            <select id="vis-depto" onchange="cargarResidentesDepto()">
+              <option value="">-- Seleccionar --</option>
+              <option value="A">Depto A</option>
+              <option value="B">Depto B</option>
+              <option value="C">Depto C</option>
+              <option value="D">Depto D</option>
+            </select>
+          </div>
+        </div>
+
+        <form id="form-visita" onsubmit="guardarVisita(event)">
+          <div class="form-group">
+            <label for="vis-residente">Residente a Visitar:</label>
+            <select id="vis-residente" required disabled>
+              <option value="">-- Primero elige piso y depto --</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="vis-nombre">Nombre de la Visita:</label>
+            <input type="text" id="vis-nombre" required placeholder="Ej: Maria López">
+          </div>
+
+          <div class="form-group">
+            <label for="vis-tipo">Tipo de Visita:</label>
+            <select id="vis-tipo" required>
+              <option value="Familiar/Amigos">Familiar / Amigos</option>
+              <option value="Proveedor de Comidas">Proveedor de Comidas (Delivery)</option>
+              <option value="Taxis o Uber">Taxis / Uber</option>
+            </select>
+          </div>
+
+          <div class="form-group">
+            <label for="vis-fecha">Fecha y Hora Programada:</label>
+            <input type="datetime-local" id="vis-fecha" required>
+          </div>
+
+          <button type="submit" class="btn btn-primary">Registrar Visita</button>
+        </form>
+      </div>
+    </section>
+
+    <!-- SECCIÓN 3: HISTORIAL DE VISITAS -->
+    <section id="sec-historial" class="section">
+      <h2>Historial de Visitas Registradas</h2>
+      <table class="data-table">
+        <thead>
+          <tr>
+            <th>Fecha/Hora Visita</th>
+            <th>Visitante</th>
+            <th>Tipo</th>
+            <th>Ubicación</th>
+            <th>Residente Visitado</th>
+          </tr>
+        </thead>
+        <tbody id="tabla-visitas">
+          <!-- Dinámico -->
+        </tbody>
+      </table>
+    </section>
+
+  </main>
+
+  <script src="app.js"></script>
+</body>
+</html>
